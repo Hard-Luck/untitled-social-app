@@ -1,8 +1,8 @@
+import { log } from "console";
 import {
   SocialDashboard,
   SocialDashboardProps,
 } from "~/components/social-dashboard";
-import validLinks from "~/config/valid-links";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
@@ -14,15 +14,15 @@ async function DashboardPage() {
   const userId = session.user.id;
 
   const socialLinks = await api.socialLinks.getById({ userId });
-  const validSocialLinks = socialLinks.filter((link) =>
-    validLinks.includes(link.platform),
-  );
+  log(socialLinks);
 
   return (
     <SocialDashboard
-      urls={validSocialLinks.reduce(
+      urls={socialLinks.reduce(
         (acc, link) => {
-          acc[link.platform as keyof SocialDashboardProps["urls"]] = link.url;
+          acc[
+            link.platform.toLowerCase() as keyof SocialDashboardProps["urls"]
+          ] = link.url;
           return acc;
         },
         {} as SocialDashboardProps["urls"],

@@ -1,3 +1,3 @@
-const validLinks = ["youtube", "facebook", "instagram", "X", "tiktok"];
+const validLinks = ["YouTube", "Instagram", "X", "TikTok"];
 
 export default validLinks;

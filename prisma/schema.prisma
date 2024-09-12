@@ -66,6 +66,8 @@ model SocialLinks {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   platform String
   url      String
+  updatedAt DateTime @default(now()) @updatedAt
+  
 
   @@unique([userId, platform])
   @@index([userId])

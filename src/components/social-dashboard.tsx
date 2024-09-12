@@ -12,6 +12,9 @@ import {
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Instagram, Youtube, Twitter, Music } from "lucide-react";
+import { api } from "~/trpc/react";
+import { toast } from "sonner";
+
 export type SocialDashboardProps = {
   urls: {
     youtube: string;
@@ -21,16 +24,21 @@ export type SocialDashboardProps = {
   };
 };
 export function SocialDashboard({ urls }: SocialDashboardProps) {
+  const { mutate } = api.socialLinks.update.useMutation({
+    onSuccess: () => {
+      toast.success("Links updated successfully");
+    },
+  });
   const [socialLinks, setSocialLinks] = useState([
-    { name: "YouTube", url: urls.youtube || "", icon: Youtube, updated: false },
-    { name: "X", url: urls.x || "", icon: Twitter, updated: false },
+    { name: "youtube", url: urls.youtube || "", icon: Youtube, updated: false },
+    { name: "x", url: urls.x || "", icon: Twitter, updated: false },
     {
-      name: "Instagram",
+      name: "instagram",
       url: urls.instagram || "",
       icon: Instagram,
       updated: false,
     },
-    { name: "TikTok", url: urls.tiktok || "", icon: Music, updated: false },
+    { name: "tiktok", url: urls.tiktok || "", icon: Music, updated: false },
   ]);
 
   const handleLinkChange = (index: number, newUrl: string) => {
@@ -44,8 +52,15 @@ export function SocialDashboard({ urls }: SocialDashboardProps) {
 
   const handleSave = () => {
     const updatedLinks = socialLinks.filter((link) => link.updated);
-    console.log("Saving links", updatedLinks);
-    // update trpc post here
+    if (updatedLinks.length === 0) {
+      return;
+    }
+    mutate({
+      links: updatedLinks.map((link) => ({
+        name: link.name,
+        url: link.url,
+      })),
+    });
   };
 
   return (
